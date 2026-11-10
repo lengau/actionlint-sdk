@@ -1,4 +1,5 @@
 name: actionlint
+title: actionlint SDK
 version: "1.7.12"
 summary: Static checker for GitHub Actions workflow files
 description: |
@@ -7,6 +8,10 @@ description: |
   deprecated commands, and integration with shellcheck and pyflakes. It is
   installed as a standalone binary and placed on the PATH in workshops.
 license: MIT
+contact: https://github.com/lengau/actionlint-sdk/issues
+issues: https://github.com/lengau/actionlint-sdk/issues
+source-code: https://github.com/lengau/actionlint-sdk
+website: https://rhysd.github.io/actionlint/
 platforms:
   ubuntu@22.04:amd64:
   ubuntu@24.04:amd64:
