@@ -1,0 +1,42 @@
+summary: Lint valid and invalid GitHub Actions workflows with actionlint SDK
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  rm -f valid-workflow.yaml invalid-workflow.yaml
+  workshop remove || true
+
+execute: |
+  cat <<'EOF' >valid-workflow.yaml
+  name: Valid Workflow
+  on: push
+  jobs:
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - run: echo "hello world"
+  EOF
+
+  cat <<'EOF' >invalid-workflow.yaml
+  name: Invalid Workflow
+  on: invalid_event_trigger
+  jobs:
+    test:
+      runs-on: ubuntu-latest
+      steps:
+        - run: echo "hello world"
+  EOF
+
+  # Linting valid workflow succeeds
+  workshop exec -- actionlint valid-workflow.yaml
+
+  # Linting invalid workflow fails
+  if workshop exec -- actionlint invalid-workflow.yaml; then
+    echo "Expected actionlint to fail on invalid-workflow.yaml, but it succeeded"
+    exit 1
+  fi
+
+debug: |
+  workshop tasks
