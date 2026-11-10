@@ -1,0 +1,49 @@
+name: actionlint
+version: "1.7.12"
+summary: Static checker for GitHub Actions workflow files
+description: |
+  This SDK provides the actionlint tool, a static checker for GitHub Actions
+  workflow files. actionlint checks workflow syntax, expressions, runner labels,
+  deprecated commands, and integration with shellcheck and pyflakes. It is
+  installed as a standalone binary and placed on the PATH in workshops.
+license: MIT
+platforms:
+  ubuntu@22.04:amd64:
+  ubuntu@24.04:amd64:
+  ubuntu@26.04:amd64:
+  ubuntu@22.04:arm64:
+    build-on: [ubuntu@22.04:amd64, ubuntu@22.04:arm64]
+    build-for: [ubuntu@22.04:arm64]
+  ubuntu@24.04:arm64:
+    build-on: [ubuntu@24.04:amd64, ubuntu@24.04:arm64]
+    build-for: [ubuntu@24.04:arm64]
+  ubuntu@26.04:arm64:
+    build-on: [ubuntu@26.04:amd64, ubuntu@26.04:arm64]
+    build-for: [ubuntu@26.04:arm64]
+  ubuntu@22.04:riscv64:
+    build-on: [ubuntu@22.04:amd64, ubuntu@22.04:arm64, ubuntu@22.04:riscv64]
+    build-for: [ubuntu@22.04:riscv64]
+  ubuntu@24.04:riscv64:
+    build-on: [ubuntu@24.04:amd64, ubuntu@24.04:arm64, ubuntu@24.04:riscv64]
+    build-for: [ubuntu@24.04:riscv64]
+  ubuntu@26.04:riscv64:
+    build-on: [ubuntu@26.04:amd64, ubuntu@26.04:arm64, ubuntu@26.04:riscv64]
+    build-for: [ubuntu@26.04:riscv64]
+
+parts:
+  actionlint:
+    plugin: go
+    source: https://github.com/rhysd/actionlint.git
+    source-type: git
+    source-tag: v${CRAFT_PROJECT_VERSION}
+    build-snaps:
+      - go/latest/stable
+    override-build: |
+      case "$CRAFT_ARCH_BUILD_FOR" in
+        amd64) export GOARCH=amd64 ;;
+        arm64) export GOARCH=arm64 ;;
+        riscv64) export GOARCH=riscv64 ;;
+      esac
+      export CGO_ENABLED=0
+      mkdir -p "${CRAFT_PART_INSTALL}/bin"
+      go build -ldflags="-s -w -X github.com/rhysd/actionlint.version=${CRAFT_PROJECT_VERSION}" -o "${CRAFT_PART_INSTALL}/bin/actionlint" ./cmd/actionlint

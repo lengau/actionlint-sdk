@@ -1,0 +1,25 @@
+# Multi-base SDK: each platform names its base, built with --platform.
+# Uploads run on push to main; the track defaults to "latest" (branch name).
+
+name: Build and Upload SDK
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-upload:
+    uses: canonical/sdkcraft-actions/.github/workflows/upload.yml@main
+    with:
+      platforms: '["ubuntu@22.04:amd64", "ubuntu@24.04:amd64", "ubuntu@26.04:amd64", "ubuntu@22.04:arm64", "ubuntu@24.04:arm64", "ubuntu@26.04:arm64", "ubuntu@22.04:riscv64", "ubuntu@24.04:riscv64", "ubuntu@26.04:riscv64"]'
+      platform-flag: "--platform"
+      track: latest
+      risk: candidate
+    secrets:
+      SDKCRAFT_STORE_CREDENTIALS: ${{ secrets.SDKCRAFT_STORE_CREDENTIALS }}

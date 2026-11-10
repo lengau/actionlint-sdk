@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cat <<EOF > /etc/profile.d/actionlint.sh
+export PATH="$SDK/bin:\$PATH"
+EOF

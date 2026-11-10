@@ -1,0 +1,14 @@
+summary: Launch workshop with actionlint SDK
+
+prepare: |
+  envsubst '${BASE}' <workshop.yaml.in >workshop.yaml
+  workshop launch
+
+restore: |
+  workshop remove || true
+
+execute: |
+  workshop exec -- actionlint -version
+
+debug: |
+  workshop tasks
